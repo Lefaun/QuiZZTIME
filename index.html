@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Question Form</title>
+</head>
+<body>
+    <h1>Submit a Quiz Question</h1>
+    
+    <form id="questionForm">
+        <div>
+            <label for="question">Question:</label>
+            <input type="text" id="question" required>
+        </div>
+        <div>
+            <label for="option1">Option 1:</label>
+            <input type="text" id="option1" required>
+        </div>
+        <div>
+            <label for="option2">Option 2:</label>
+            <input type="text" id="option2" required>
+        </div>
+        <div>
+            <label for="correctAnswer">Correct Answer:</label>
+            <select id="correctAnswer" required>
+                <option value="">Select answer</option>
+                <option value="0">Option 1</option>
+                <option value="1">Option 2</option>
+            </select>
+        </div>
+        <button type="submit">Submit Question</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        const API_URL = 'https://de32c7300438c18386907ecc96b95d39.onrender.com';
+
+        document.getElementById('questionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                question: document.getElementById('question').value,
+                option1: document.getElementById('option1').value,
+                option2: document.getElementById('option2').value,
+                correctAnswer: parseInt(document.getElementById('correctAnswer').value)
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/api/submit-question`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+                document.getElementById('result').textContent = 
+                    response.ok ? 'Question submitted successfully!' : `Error: ${result.error}`;
+                
+                if (response.ok) {
+                    e.target.reset();
+                }
+            } catch (error) {
+                document.getElementById('result').textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
